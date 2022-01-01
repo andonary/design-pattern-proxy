@@ -11,6 +11,11 @@ import { Restaurant } from "../src/utils/models/restaurant";
 
 describe("Design Pattern Proxy Example", () => {
   const sushiTropBon = new Restaurant("Sushi trop bon");
+  let database: Database;
+
+  beforeEach(function() {
+    database = new Database();
+  });
 
   test.each([
     {
@@ -31,12 +36,13 @@ describe("Design Pattern Proxy Example", () => {
   ])("it should display a list of restaurant available now: '$restaurantsAvailable'", async (cases) => {
     // Arrange
     const { restaurantsAvailable, expectedList, databaseAvailable } = cases;
-    const database = new Database();
     database.feedWith(restaurantsAvailable);
     database.isAvailable = databaseAvailable;
+    // Real Arrange
     const retrieveRestaurantList: RetrieveRestaurantListInterface = new RealRetrieveRestaurantList(database);
-    const proxyRetrieve: RetrieveRestaurantListInterface = new ProxyRetrieve(database);
     const clientCode = new ClientCode(retrieveRestaurantList);
+    // Proxy Arrange
+    const proxyRetrieve: RetrieveRestaurantListInterface = new ProxyRetrieve(database);
     const clientCodeProxy = new ClientCode(proxyRetrieve);
 
     // Act
